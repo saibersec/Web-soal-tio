@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Biologi Bab 2: Virus (100 Soal)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --success: #16a34a;
+            --error: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f5f9;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .question-card {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .question-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .badge-mudah { background: #dcfce7; color: #166534; }
+        .badge-sedang { background: #fef9c3; color: #854d0e; }
+        .badge-sulit { background: #fee2e2; color: #991b1b; }
+
+        .options label {
+            display: block;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .options label:hover {
+            background-color: #f8fafc;
+            border-color: var(--primary);
+        }
+
+        .options input {
+            margin-right: 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+        }
+
+        .score-box {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .explanation {
+            font-size: 0.9rem;
+            color: #475569;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-left: 4px solid var(--primary);
+            margin-top: 10px;
+            border-radius: 0 6px 6px 0;
+            display: none;
+        }
+        
+        .correct { color: var(--success); font-weight: bold; }
+        .incorrect { color: var(--error); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Kuis Biologi: Bab 2 Virus</h1>
+    <p class="subtitle">Uji pemahamanmu melalui 100 soal komprehensif tentang struktur, bentuk, inang, dan peranan virus.</p>
+
+    <div id="quiz-box">
+        <div class="quiz-info">
+            <span id="progress-text">Soal 1 dari 100</span>
+            <span id="timer">Waktu: <span id="time">00:00</span></span>
+        </div>
+
+        <div id="question-container">
+            <!-- Soal akan dimuat di sini oleh JavaScript -->
+        </div>
+
+        <button class="btn" id="next-btn" onclick="nextQuestion()">Selanjutnya</button>
+    </div>
+
+    <div id="result-container">
+        <h2>Hasil Kuis Anda</h2>
+        <div class="score-box" id="final-score">0</div>
+        <p id="score-message"></p>
+        <button class="btn" onclick="location.reload()">Ulangi Kuis</button>
+    </div>
+</div>
+
+<script>
+    // Database 100 Soal Lengkap
+    const rawQuestions = [
+        // STRUKTUR TUBUH VIRUS (1-20)
+        { q: "Bagian luar virus yang membungkus materi genetik dan tersusun atas protein disebut...", options: ["Kapsid", "Kapsomer", "Virion", "Enzim"], answer: "Kapsid", diff: "mudah", exp: "Kapsid adalah selubung protein pelindung materi genetik virus." },
+        { q: "Unit-unit protein kecil penyusun kapsid dinamakan...", options: ["Kapsomer", "Kapsid", "Glikoprotein", "Flagela"], answer: "Kapsomer", diff: "sedang", exp: "Kapsomer adalah sub-unit protein yang membentuk struktur kapsid." },
+        { q: "Materi genetik yang dapat ditemukan di dalam tubuh virus adalah...", options: ["DNA atau RNA saja", "DNA dan RNA sekaligus", "Protein kompleks", "Karbohidrat rantai ganda"], answer: "DNA atau RNA saja", diff: "mudah", exp: "Virus hanya memiliki salah satu jenis asam nukleat saja (DNA atau RNA)." },
+        { q: "Selubung tambahan yang membungkus kapsid pada beberapa virus (seperti influenza) tersusun atas...", options: ["Lipoprotein", "Selulosa", "Peptidoglikan", "Pati"], answer: "Lipoprotein", diff: "sedang", exp: "Sampul atau envelope virus tersusun atas lipid dan protein (lipoprotein)." },
+        { q: "Bagian pada bakteriofag yang berfungsi untuk menancapkan diri ke dinding sel bakteri adalah...", options: ["Serabut ekor", "Kepala", "Kapsid", "Leher"], answer: "Serabut ekor", diff: "sedang", exp: "Serabut ekor digunakan oleh bakteriofag untuk menempel pada reseptor sel inang." },
+        { q: "Virus tidak dianggap sebagai sel seutuhnya karena tidak memiliki...", options: ["Sitoplasma dan organel sel", "Asam nukleat", "Protein", "Materi genetik"], answer: "Sitoplasma dan organel sel", diff: "mudah", exp: "Virus bersifat aseluler karena tidak memiliki protoplasma, sitoplasma, maupun organel." },
+        { q: "Enzim yang sering ditemukan pada virus retrovirus untuk mengubah RNA menjadi DNA adalah...", options: ["Transkriptase balik", "RNA polimerase", "Helikase", "Ligase"], answer: "Transkriptase balik", diff: "sulit", exp: "Retrovirus menggunakan enzim reverse transcriptase (transkriptase balik) untuk replikasi." },
+        { q: "Protein spesifik yang menonjol dari selubung virus dan berfungsi untuk mengenali reseptor sel inang disebut...", options: ["Glikoprotein", "Kapsomer", "Toksin", "Lipid ganda"], answer: "Glikoprotein", diff: "sulit", exp: "Glikoprotein pada permukaan virus bertindak sebagai kunci untuk mengenali sel inang." },
+        { q: "Bentuk keseluruhan virus yang utuh dan matang di luar sel inang sering disebut sebagai...", options: ["Virion", "Bakteriofag", "Prion", "Viroid"], answer: "Virion", diff: "sedang", exp: "Virion adalah partikel virus lengkap yang infektif di luar sel." },
+        { q: "Bagian kepala bakteriofag berisi...", options: ["Asam nukleat (DNA/RNA)", "Ribosom", "Mitokondria", "Enzim pencernaan sel"], answer: "Asam nukleat (DNA/RNA)", diff: "mudah", exp: "Kepala virus berfungsi menyimpan materi genetik." },
+        { q: "Mengapa virus dikatakan bersifat kristal jika berada di luar sel inang?", options: ["Karena dapat mengkristal dan tidak menunjukkan ciri hidup", "Karena tersusun dari mineral kaca", "Karena memiliki ikatan kovalen padat", "Karena dapat larut dalam air"], answer: "Karena dapat mengkristal dan tidak menunjukkan ciri hidup", diff: "sedang", exp: "Di luar sel inang, virus tidak bermetabolisme dan dapat dikristalkan." },
+        { q: "Ukuran rata-rata partikel virus berkisar antara...", options: ["20 - 400 nanometer", "1 - 10 mikrometer", "1 - 5 milimeter", "500 - 1000 nanometer"], answer: "20 - 400 nanometer", diff: "sedang", exp: "Virus jauh lebih kecil dari bakteri, ukurannya berkisar antara 20–400 nm." },
+        { q: "Asam nukleat pada virus TMV (Tobacco Mosaic Virus) adalah...", options: ["RNA", "DNA", "DNA ganda", "Keduanya"], answer: "RNA", diff: "sulit", exp: "TMV adalah virus yang menyerang tembakau dengan materi genetik berupa RNA." },
+        { q: "Bagian tubuh bakteriofag yang berfungsi menyalurkan DNA ke dalam sel inang adalah...", options: ["Jarum penusuk / selubung ekor", "Kepala", "Serabut ekor", "Kapsid"], answer: "Jarum penusuk / selubung ekor", diff: "sedang", exp: "Selubung ekor berkontraksi untuk memasukkan DNA ke sel bakteri." },
+        { q: "Lapisan pelindung luar pada virus Corona (COVID-19) berupa...", options: ["Sampul membran lipid", "Dinding sel peptidoglikan", "Kapsid tebal berlapis kayu", "Cangkang zat kapur"], answer: "Sampul membran lipid", diff: "mudah", exp: "COVID-19 adalah virus bersampul (enveloped virus)." },
+        { q: "Manakah struktur yang TIDAK pernah ditemukan pada virus?", options: ["Ribosom aktif", "Protein kapsid", "DNA", "RNA"], answer: "Ribosom aktif", diff: "mudah", exp: "Virus tidak memiliki ribosom sendiri sehingga bergantung pada sel inang untuk sintesis protein." },
+        { q: "Bentuk simetri kapsid virus umumnya dikelompokkan menjadi...", options: ["Helikal, ikosahedral, dan kompleks", "Bulat, kubus, dan tabung", "Batang dan spiral saja", "Polimorfik dan amorf"], answer: "Helikal, ikosahedral, dan kompleks", diff: "sulit", exp: "Bentuk simetri kapsid virus diklasifikasikan menjadi helikal, ikosahedral, dan kompleks." },
+        { q: "Apa fungsi utama dari lempeng dasar pada bakteriofag?", options: ["Tempat melekatnya serabut ekor dan jarum penusuk", "Menghasilkan energi ATP", "Membentuk kapsid baru", "Menyimpan cadangan makanan"], answer: "Tempat melekatnya serabut ekor dan jarum penusuk", diff: "sulit", exp: "Lempeng dasar berfungsi sebagai penumpu serabut ekor saat menempel." },
+        { q: "Unsur kimia utama penyusun kapsid virus adalah...", options: ["Asam amino (protein)", "Asam nukleat", "Asam lemak", "Glukosa"], answer: "Asam amino (protein)", diff: "sedang", exp: "Kapsid tersusun atas rangkaian molekul protein." },
+        { q: "Apakah virus memiliki membran plasma seperti sel hidup?", options: ["Tidak ada, melainkan ada yang memiliki sampul (envelope)", "Ada, tersusun dari fosfolipid ganda yang sempurna", "Ada, untuk respirasi sel", "Ada, untuk transpor aktif"], answer: "Tidak ada, melainkan ada yang memiliki sampul (envelope)", diff: "sedang", exp: "Virus tidak memiliki membran plasma seluler." },
+
+        // MACAM-MACAM BENTUK VIRUS (21-40)
+        { q: "Bentuk virus Tobacco Mosaic Virus (TMV) adalah...", options: ["Batang (helikal)", "Bulat", "Polihedral", "Seperti huruf T"], answer: "Batang (helikal)", diff: "mudah", exp: "TMV memiliki bentuk batang helikal." },
+        { q: "Virus yang berbentuk seperti huruf T dan menyerang bakteri disebut...", options: ["Bakteriofag", "Adenovirus", "Ebola", "Rhabdovirus"], answer: "Bakteriofag", diff: "mudah", exp: "Bakteriofag memiliki struktur khas menyerang bakteri, berbentuk seperti huruf T." },
+        { q: "Contoh virus yang memiliki bentuk bulat adalah...", options: ["HIV dan Influenza", "TMV dan Toxin", "Bakteriofag", "Bakteri E. coli"], answer: "HIV dan Influenza", diff: "sedang", exp: "Virus HIV dan Influenza termasuk virus berbentuk bulat." },
+        { q: "Bentuk geometri polihedral (segi banyak beraturan) dengan 20 sisi ditemukan pada virus...", options: ["Adenovirus", "TMV", "Ebola", "Bakteriofag"], answer: "Adenovirus", diff: "sulit", exp: "Adenovirus memiliki bentuk kapsid ikosahedral (polihedral 20 sisi)." },
+        { q: "Virus penyebab penyakit rabies (Rhabdovirus) memiliki bentuk menyerupai...", options: ["Peluru", "Batang panjang", "Bola", "Huruf T"], answer: "Peluru", diff: "sedang", exp: "Rhabdovirus memiliki bentuk khas seperti peluru." },
+        { q: "Bentuk virus Ebola adalah...", options: ["Benang panjang (filamentous)", "Bulat", "Segi banyak", "Batang kaku"], answer: "Benang panjang (filamentous)", diff: "sedang", exp: "Virus Ebola berbentuk filamen atau benang panjang yang fleksibel." },
+        { q: "Virus bentuk helikal menyerupai bentuk...", options: ["Batang atau tabung panjang", "Piramida", "Bola tenis", "Bintang"], answer: "Batang atau tabung panjang", diff: "mudah", exp: "Helikal menyerupai batang panjang atau silinder." },
+        { q: "Bentuk ikosahedral pada virus adalah struktur tiga dimensi dengan berapa sisi segitiga sama sisi?", options: ["20 sisi", "12 sisi", "6 sisi", "8 sisi"], answer: "20 sisi", diff: "sulit", exp: "Ikosahedral memiliki 20 wajah (sisi) segitiga." },
+        { q: "Manakah virus berikut yang berbentuk kompleks?", options: ["Bakteriofag", "TMV", "Poliovirus", "Hepatitis B"], answer: "Bakteriofag", diff: "sedang", exp: "Bakteriofag memiliki struktur kepala ikosahedral dan ekor helikal (kompleks)." },
+        { q: "Poliovirus memiliki bentuk kapsid...", options: ["Ikosahedral (bulat)", "Batang", "Benang", "Peluru"], answer: "Ikosahedral (bulat)", diff: "sedang", exp: "Poliovirus berbentuk ikosahedral." },
+        { q: "Virus influenza dapat berubah bentuk (pleimorfik) karena...", options: ["Memiliki sampul lipid yang fleksibel", "Tidak punya kapsid", "Dapat membelah diri", "Mengandung dinding sel"], answer: "Memiliki sampul lipid yang fleksibel", diff: "sulit", exp: "Sampul lipid yang tidak kaku membuat bentuk influenza bisa agak bervariasi." },
+        { q: "Bentuk virus corona (SARS-CoV-2) jika dilihat dengan mikroskop elektron tampak seperti...", options: ["Bulat dengan tonjolan mahkota", "Batang lurus", "Huruf T", "Benang kusut"], answer: "Bulat dengan tonjolan mahkota", diff: "mudah", exp: "Corona berasal dari kata mahkota karena tonjolan glikoprotein di permukaannya." },
+        { q: "Virus cacar (Poxvirus) memiliki bentuk...", options: ["Oval atau bata (kompleks)", "Batang helikal", "Benang panjang", "Bulat sempurna"], answer: "Oval atau bata (kompleks)", diff: "sulit", exp: "Poxvirus adalah salah satu virus terbesar dengan bentuk oval/seperti bata." },
+        { q: "Apakah semua virus memiliki bentuk yang tetap?", options: ["Tidak, ada yang bentuknya fleksibel (pleimorfik)", "Ya, semuanya sangat kaku", "Ya, bentuknya selalu kotak", "Tidak, bentuknya bisa berubah jadi tumbuhan"], answer: "Tidak, ada yang bentuknya fleksibel (pleimorfik)", diff: "sedang", exp: "Beberapa virus bersampul bersifat pleimorfik (bentuknya dapat berubah)." },
+        { q: "Struktur ekor pada bakteriofag termasuk dalam simetri...", options: ["Helikal", "Ikosahedral", "Kubus", "Bola"], answer: "Helikal", diff: "sulit", exp: "Bagian ekor fagin tersusun secara helikal." },
+        { q: "Manakah pasangan virus dan bentuknya yang BENAR?", options: ["TMV - Batang", "Rabies - Kotak", "HIV - Batang lurus", "Bakteriofag - Bulat sempurna"], answer: "TMV - Batang", diff: "mudah", exp: "TMV adalah contoh klasik virus bentuk batang." },
+        { q: "Virus yang menyerang tanaman tembakau pertama kali diteliti bentuknya oleh ilmuwan bernama...", options: ["Dmitri Ivanovsky / Wendell Stanley", "Louis Pasteur", "Alexander Fleming", "Robert Hooke"], answer: "Dmitri Ivanovsky / Wendell Stanley", diff: "sulit", exp: "Wendell Stanley berhasil mengkristalkan TMV." },
+        { q: "Virus bentuk filamen umumnya menyerang...", options: ["Hewan dan manusia (seperti Marburg dan Ebola)", "Bakteri saja", "Tumbuhan dikotil", "Alga hijau"], answer: "Hewan dan manusia (seperti Marburg dan Ebola)", diff: "sedang", exp: "Contoh virus filamen adalah Marburg dan Ebola." },
+        { q: "Kapsid berbentuk ikosahedral terlihat mirip dengan bentuk...", options: ["Bola sepak atau kristal", "Pipa air", "Peluru senjata", "Benang wol"], answer: "Bola sepak atau kristal", diff: "sedang", exp: "Ikosahedral menyerupai bola sepak atau struktur kristal." },
+        { q: "Bentuk virus dikelompokkan berdasarkan arsitektur dari...", options: ["Kapsidnya", "DNA-nya", "Ekornya", "Inangnya"], answer: "Kapsidnya", diff: "mudah", exp: "Klasifikasi bentuk virus didasarkan pada simetri kapsidnya." },
+
+        // VIRUS YG MENYERANG BAKTERI, TANAMAN, DAN HEWAN (41-60)
+        { q: "Virus yang khusus menginfeksi sel bakteri disebut...", options: ["Bakteriofag", "Cyanofag", "Zoofag", "Fitofag"], answer: "Bakteriofag", diff: "mudah", exp: "Bakteriofag (fag) adalah virus pemakan bakteri." },
+        { q: "Contoh bakteriofag yang sangat terkenal dan sering dijadikan objek penelitian adalah...", options: ["Fag T4", "TMV", "H5N1", "Rabies virus"], answer: "Fag T4", diff: "sedang", exp: "Bakteriofag T4 adalah model standar penelitian virus bakteri." },
+        { q: "Virus yang menyerang tumbuhan tembakau adalah...", options: ["TMV (Tobacco Mosaic Virus)", "TYMV", "CVV", "AMV"], answer: "TMV (Tobacco Mosaic Virus)", diff: "mudah", exp: "TMV menyerang tanaman tembakau menyebabkan bercak mosaik." },
+        { q: "Penyakit Tungro pada tanaman padi disebabkan oleh infeksi...", options: ["Virus", "Bakteri", "Jamur", "Cacing"], answer: "Virus", diff: "sedang", exp: "Tungro adalah penyakit tanaman padi yang disebabkan oleh virus." },
+        { q: "Contoh virus yang menyerang hewan unggas (ayam/bebek) adalah...", options: ["Avian Influenza (H5N1)", "Rabies", "NCD (Tetelo)", "Jawaban A dan C benar"], answer: "Jawaban A dan C benar", diff: "sedang", exp: "Flu burung (H5N1) dan Tetelo (NCD) adalah virus pada unggas." },
+        { q: "Penyakit Kuku dan Mulut (FMD) pada hewan ternak sapi dan domba disebabkan oleh...", options: ["Virus", "Bakteri anthrax", "Protozoa", "Cacing hati"], answer: "Virus", diff: "sulit", exp: "Foot and Mouth Disease (FMD) disebabkan olehAphthovirus." },
+        { q: "Bagaimana cara virus masuk ke dalam sel tumbuhan?", options: ["Melalui luka atau bantuan vektor serangga", "Menembus dinding sel tebal secara langsung", "Melalui proses fagositosis aktif", "Masuk lewat stomata terbuka dengan bantuan kaki"], answer: "Melalui luka atau bantuan vektor serangga", diff: "sedang", exp: "Dinding sel tumbuhan sangat kuat, sehingga virus masuk lewat luka atau gigitan serangga (vektor)." },
+        { q: "Vektor utama penularan virus pada tanaman pertanian biasanya adalah...", options: ["Serangga (seperti kutu daun/vektor)", "Burung pemakan biji", "Cacing tanah", "Ikan air tawar"], answer: "Serangga (seperti kutu daun/vektor)", diff: "mudah", exp: "Serangga penghisap cairan tanaman sering menjadi vektor virus tumbuhan." },
+        { q: "Virus pada hewan yang menyerang sistem saraf pusat dan menyebabkan anjing/kucing gila adalah...", options: ["Rabies", "Parvovirus", "Distemper", "FIV"], answer: "Rabies", diff: "mudah", exp: "Rabies menyerang sistem saraf hewan berdarah panas dan manusia." },
+        { q: "Penyakit mosaik pada tanaman buncis atau kedelai disebabkan oleh...", options: ["Bean Mosaic Virus", "TMV", "Tungro", "Citrus Tristeza Virus"], answer: "Bean Mosaic Virus", diff: "sulit", exp: "Sesuai namanya, Bean Mosaic Virus menyerang tanaman kacang-kacangan." },
+        { q: "Citrus Tristeza Virus (CTV) adalah virus yang menyerang tanaman...", options: ["Jeruk", "Padi", "Tembakau", "Kentang"], answer: "Jeruk", diff: "sedang", exp: "Tristeza menyerang tanaman jeruk dan mematikan jaringan pembuluhnya." },
+        { q: "Apakah virus dapat menginfeksi alga atau sianobakteri?", options: ["Ya, ada virus khusus yang disebut sianofag", "Tidak, virus hanya menyerang manusia", "Tidak, alga bukan makhluk hidup", "Ya, tapi hanya hidup di darat"], answer: "Ya, ada virus khusus yang disebut sianofag", diff: "sulit", exp: "Cyanophage adalah virus yang menginfeksi cyanobacteria (alga hijau-biru)." },
+        { q: "Siklus reproduksi virus pada bakteri yang menghancurkan sel inang di akhir siklus disebut...", options: ["Siklus litik", "Siklus lisogenik", "Siklus Krebs", "Siklus Calvin"], answer: "Siklus litik", diff: "mudah", exp: "Siklus litik berujung pada lisis (pecahnya) sel inang." },
+        { q: "Pada siklus lisogenik, DNA virus akan...", options: ["Menyisip ke dalam DNA bakteri (profag)", "Langsung memecah sel bakteri", "Keluar dari sel tanpa merusak", "Berubah menjadi protein"], answer: "Menyisip ke dalam DNA bakteri (profag)", diff: "sedang", exp: "DNA virus berintegrasi dengan kromosom bakteri membentuk profag." },
+        { q: "Hewan peliharaan kucing dapat terserang virus penurun kekebalan tubuh yang mirip HIV pada manusia, yaitu...", options: ["FIV (Feline Immunodeficiency Virus)", "Rabies", "Anthrax", "Tetanus"], answer: "FIV (Feline Immunodeficiency Virus)", diff: "sulit", exp: "FIV adalah HIV versi kucing." },
+        { q: "Penyakit Tetelo (NCD) pada ayam ditandai dengan gejala...", options: ["Kepala berputar-putar dan lemas", "Bulu rontok total", "Kaki bengkak berdarah", "Mata berair dan buta"], answer: "Kepala berputar-putar dan lemas", diff: "sulit", exp: "Newcaslte Disease (Tetelo) menyerang saraf unggas." },
+        { q: "Mengapa bakteriofag tidak berbahaya bagi manusia?", options: ["Karena inang spesifiknya adalah sel bakteri, bukan sel manusia", "Karena ukurannya terlalu besar", "Karena mati di dalam lambung manusia", "Karena dapat dicerna tubuh"], answer: "Karena inang spesifiknya adalah sel bakteri, bukan sel manusia", diff: "mudah", exp: "Virus bersifat sangat spesifik terhadap sel inangnya." },
+        { q: "Contoh virus tumbuhan yang menyebabkan daun menggulung dan kerdil pada kentang adalah...", options: ["Potato Leafroll Virus (PLRV)", "TMV", "Tungro", "Mosaic virus"], answer: "Potato Leafroll Virus (PLRV)", diff: "sulit", exp: "PLRV menyerang tanaman kentang." },
+        { q: "Virus yang menyerang saluran pencernaan anjing dan sangat mematikan adalah...", options: ["Parvovirus", "TMV", "FIV", "Avian influenza"], answer: "Parvovirus", diff: "sedang", exp: "Parvovirus anjing menyerang sel usus dan sumsum tulang." },
+        { q: "Bakteri yang terinfeksi profag dalam siklus lisogenik menjadi kebal terhadap infeksi virus sejenis karena...", options: ["Adanya kekebalan dari materi genetik virus yang disisipkan", "Bakteri membentuk dinding tebal", "Bakteri memakan virus", "Virus keluar dengan sendirinya"], answer: "Adanya kekebalan dari materi genetik virus yang disisipkan", diff: "sulit", exp: "Profag memberikan imunitas bagi bakteri dari infeksi fag sekunder." },
+
+        // PERANAN VIRUS YG MENGUNTUNGKAN (61-80)
+        { q: "Peranan virus yang menguntungkan di bidang bioteknologi kedokteran adalah...", options: ["Pembuatan vaksin", "Pembuatan antibiotik", "Fermentasi keju", "Pembuatan vitamin C"], answer: "Pembuatan vaksin", diff: "mudah", exp: "Vaksin dibuat dari virus yang dilemahkan atau dimatikan untuk merangsang antibodi." },
+        { q: "Bagaimana virus dapat dimanfaatkan sebagai vektor dalam terapi gen?", options: ["Virus dimodifikasi untuk membawa gen normal ke sel pasien", "Virus disuntikkan untuk membunuh semua sel", "Virus mengubah darah menjadi enzim", "Virus membersihkan racun hati"], answer: "Virus dimodifikasi untuk membawa gen normal ke sel pasien", diff: "sulit", exp: "Vektor virus digunakan untuk mentransfer gen sehat ke dalam sel tubuh manusia yang rusak." },
+        { q: "Pemanfaatan virus untuk mengendalikan hama tanaman (insektisida alami) contohnya adalah penggunaan...", options: ["Baculo virus", "TMV", "Bakteriofag T4", "Poliovirus"], answer: "Baculo virus", diff: "sedang", exp: "Baculovirus digunakan sebagai pengendali hayati hama serangga." },
+        { q: "Peta kromosom atau pemetaan genetik dapat dibuat dengan bantuan virus karena...", options: ["Virus dapat menyisipkan gen tertentu ke kromosom inang", "Virus mudah dilihat dengan mata telanjang", "Virus memiliki DNA buatan manusia", "Virus mempercepat mutasi total"], answer: "Virus dapat menyisipkan gen tertentu ke kromosom inang", diff: "sulit", exp: "Virus membantu ilmuwan memahami fungsi gen dan lokasinya." },
+        { q: "Vaksin polio buatan Jonas Salk menggunakan jenis virus...", options: ["Virus yang dimatikan (inactivated)", "Virus hidup yang sangat ganas", "Bakteri pengurai", "DNA murni tanpa protein"], answer: "Virus yang dimatikan (inactivated)", diff: "sedang", exp: "Vaksin Salk menggunakan virus polio mati." },
+        { q: "Vaksin yang menggunakan virus hidup namun telah dilemahkan virulensinya disebut vaksin...", options: ["Atenuasi", "Inaktif", "Subunit", "Toksoid"], answer: "Atenuasi", diff: "sulit", exp: "Vaksin atenuasi menggunakan patogen hidup yang dilemahkan." },
+        { q: "Dalam dunia kedokteran, bakteriofag kadang diteliti sebagai alternatif pengganti antibiotik untuk membunuh...", options: ["Bakteri patogen kebal antibiotik", "Virus lain", "Sel kanker darah", "Jamur kulit"], answer: "Bakteri patogen kebal antibiotik", diff: "sedang", exp: "Terapi fags (phage therapy) digunakan melawan bakteri resisten obat." },
+        { q: "Produk rekayasa genetika seperti insulin manusia dapat diproduksi massal dengan memasukkan gen insulin ke dalam bakteri menggunakan perantara...", options: ["Plasmid atau virus sebagai vektor", "Kapsid kosong", "Enzim amilase", "Asam cuka"], answer: "Plasmid atau virus sebagai vektor", diff: "sedang", exp: "Virus/plasmid sering dipakai sebagai pembawa gen (vektor kloning)." },
+        { q: "Bagaimana cara kerja vaksin di dalam tubuh makhluk hidup?", options: ["Merangsang sistem kekebalan tubuh membentuk antibodi spesifik", "Membunuh seluruh sel darah putih", "Menambah energi otot", "Mempercepat pembelahan sel"], answer: "Merangsang sistem kekebalan tubuh membentuk antibodi spesifik", diff: "mudah", exp: "Vaksin melatih sistem imun mengenali penjahat tanpa membuat sakit." },
+        { q: "Ilmuwan yang pertama kali membuat vaksin cacar sapi (Smallpox) adalah...", options: ["Edward Jenner", "Louis Pasteur", "Dmitri Ivanovsky", "Robert Koch"], answer: "Edward Jenner", diff: "sedang", exp: "Edward Jenner menemukan vaksin cacar pertama dari nanas cacar sapi." },
+        { q: "Apakah ada virus yang berfungsi menjaga keseimbangan ekosistem laut?", options: ["Ya, virus laut mengendalikan populasi bakteri dan fitoplankton", "Tidak, virus di laut selalu merusak", "Tidak ada virus di lautan", "Ya, virus laut memproduksi oksigen"], answer: "Ya, virus laut mengendalikan populasi bakteri dan fitoplankton", diff: "sulit", exp: "Virus laut (bakteriofag laut) mengatur dinamika populasi mikroba laut." },
+        { q: "Pemberantasan hama ulat bulu atau serangga perkebunan dapat memanfaatkan virus jenis...", options: ["Baculovirus", "Retrovirus", "Adenovirus", "Coronavirus"], answer: "Baculovirus", diff: "mudah", exp: "Baculovirus spesifik menyerang serangga hama tanpa mencemari lingkungan." },
+        { q: "Pembuatan peta tubuh virus (viromap) berguna dalam bidang...", options: ["Kedokteran dan farmasi", "Teknik mesin", "Arsitektur kota", "Ekonomi makro"], answer: "Kedokteran dan farmasi", diff: "mudah", exp: "Berguna untuk pengembangan obat dan pencegahan penyakit." },
+        { q: "Mengapa virus yang dilemahkan aman dijadikan vaksin?", options: ["Karena tidak menyebabkan penyakit parah tetapi tetap memicu imun", "Karena sudah diubah menjadi tumbuhan", "Karena tidak memiliki protein", "Karena langsung hancur di udara"], answer: "Karena tidak menyebabkan penyakit parah tetapi tetap memicu imun", diff: "sedang", exp: "Virus dilemahkan kehilangan sifat patogennya namun tetap dikenali oleh sistem imun." },
+        { q: "Penelitian genetika molekuler sangat berhutang budi pada virus karena strukturnya yang...", options: ["Sederhana dan mudah dianalisis", "Sangat besar dan kompleks", "Memiliki sel lengkap", "Dapat hidup mandiri"], answer: "Sederhana dan mudah dianalisis", diff: "sedang", exp: "Struktur virus yang simpel memudahkan pemahaman biologi molekuler." },
+        { q: "Terapi gen menggunakan vektor virus berhasil dikembangkan untuk mengobati penyakit...", options: ["Kelainan genetik langka (seperti SCID)", "Patah tulang", "Sakit gigi", "Mata minus"], answer: "Kelainan genetik langka (seperti SCID)", diff: "sulit", exp: "Terapi gen sukses diuji pada pasien imunodefisiensi berat (SCID)." },
+        { q: "Protein virus tertentu dapat dimanfaatkan untuk memproduksi...", options: ["Vaksin dan antiserum", "Bensin organik", "Plastik daur ulang", "Kain katun"], answer: "Vaksin dan antiserum", diff: "mudah", exp: "Protein mantel virus sering dipakai sebagai antigen pembuat vaksin." },
+        { q: "Peran virus dalam siklus biogeokimia di laut adalah...", options: ["Melepaskan nutrien organik terlarut melalui lisis sel inang", "Menyerap seluruh karbon dioksida", "Mengubah garam jadi tawar", "Membekukan air laut"], answer: "Melepaskan nutrien organik terlarut melalui lisis sel inang", diff: "sulit", exp: "Lisis oleh virus mendaur ulang nutrien penting di ekosistem perairan." },
+        { q: "Manakah di bawah ini yang BUKAN merupakan bentuk pemanfaatan virus?", options: ["Senjata biologis pemusnah masal", "Pembuatan vaksin", "Pengendali hama biologis", "Vektor terapi gen"], answer: "Senjata biologis pemusnah masal", diff: "mudah", exp: "Penggunaan virus sebagai senjata biologis adalah penyalahgunaan yang merugikan." },
+        { q: "Dengan rekayasa genetika, virus dapat digunakan untuk memasukkan gen penghasil ... ke dalam sel bakteri.", options: ["Enzim atau hormon penting", "Racun mematikan", "Logam berat", "Plastik murni"], answer: "Enzim atau hormon penting", diff: "sedang", exp: "Contohnya produksi insulin atau hormon pertumbuhan." },
+
+        // PERANAN VIRUS YG MERUGIKAN (81-100)
+        { q: "Penyakit AIDS pada manusia disebabkan oleh virus...", options: ["HIV (Human Immunodeficiency Virus)", "Hepatitis B", "Ebola", "Herpes"], answer: "HIV (Human Immunodeficiency Virus)", diff: "mudah", exp: "HIV menyerang sistem kekebalan tubuh manusia (sel T helper)." },
+        { q: "Penyakit demam berdarah dengue (DBD) ditularkan melalui vektor nyamuk Aedes aegypti dan disebabkan oleh virus...", options: ["Dengue virus", "Zika virus", "Chikungunya virus", "Ebola virus"], answer: "Dengue virus", diff: "mudah", exp: "Virus Dengue adalah penyebab utama DBD." },
+        { q: "Penyakit pernapasan akut yang sempat menjadi pandemi global pada tahun 2020 adalah COVID-19 yang disebabkan oleh...", options: ["SARS-CoV-2", "H5N1", "Influenza A", "Rhabdovirus"], answer: "SARS-CoV-2", diff: "mudah", exp: "SARS-CoV-2 adalah virus penyebab COVID-19." },
+        { q: "Penyakit yang menyerang hati (liver) dan ditandai dengan kulit serta mata menguning adalah...", options: ["Hepatitis (A, B, C, dll.)", "TBC", "Malaria", "Kolera"], answer: "Hepatitis (A, B, C, dll.)", diff: "sedang", exp: "Virus hepatitis menyerang sel-sel hati." },
+        { q: "Penyakit cacar air (varicella) disebabkan oleh infeksi virus...", options: ["Varicella zoster virus", "Variola virus", "Herpes simplex", "Poxvirus"], answer: "Varicella zoster virus", diff: "sedang", exp: "Varicella zoster menyebabkan cacar air dan kemudian herpes zoster (cacar api)." },
+        { q: "Penyakit flu burung yang sangat berbahaya bagi unggas dan dapat menular ke manusia disebabkan oleh...", options: ["Virus H5N1", "Virus H1N1", "Rhabdovirus", "Polio virus"], answer: "Virus H5N1", diff: "sedang", exp: "H5N1 adalah strain avian influenza yang mematikan." },
+        { q: "Polio adalah penyakit lumpuh layu yang menyerang sistem...", options: ["Saraf motorik", "Pencernaan", "Pernapasan atas", "Peredaran darah"], answer: "Saraf motorik", diff: "sedang", exp: "Poliovirus menyerang sistem saraf dan menyebabkan kelumpuhan otot." },
+        { q: "Gejala khas dari penyakit demam berdarah selain demam tinggi adalah...", options: ["Penurunan jumlah trombosit dan bintik merah", "Pembengkakan leher", "Kelumpuhan kaki", "Batuk berdarah hijau"], answer: "Penurunan jumlah trombosit dan bintik merah", diff: "sedang", exp: "DBD ditandai kebocoran pembuluh darah dan trombosit turun drastis." },
+        { q: "Penyakit campak (measles) pada anak-anak disebabkan oleh virus dari kelompok...", options: ["Paramyxovirus", "Orthomyxovirus", "Poxvirus", "Retrovirus"], answer: "Paramyxovirus", diff: "sulit", exp: "Campak disebabkan oleh infeksi virus campak golongan paramyxovirus." },
+        { q: "Kutil (veruka) pada kulit manusia umumnya disebabkan oleh infeksi virus...", options: ["HPV (Human Papillomavirus)", "HSV", "HIV", "EBV"], answer: "HPV (Human Papillomavirus)", diff: "sedang", exp: "HPV menyebabkan pertumbuhan sel kulit berlebih berupa kutil." },
+        { q: "Herpes simpleks tipe 1 umumnya menimbulkan gejala berupa...", options: ["Luka lepuh di sekitar bibir atau mulut", "Luka pada organ kelamin", "Kelumpuhan total", "Kuning pada hati"], answer: "Luka lepuh di sekitar bibir atau mulut", diff: "sulit", exp: "HSV-1 biasanya menyebabkan cold sore di bibir." },
+        { q: "Penyakit pada tanaman padi yang menyebabkan tanaman menjadi kerdil dan daun berwarna kuning pucat adalah...", options: ["Tungro", "TMV", "Foot and Mouth Disease", "Cacar daun"], answer: "Tungro", diff: "sedang", exp: "Penyakit tungro padi dibawa oleh wereng hijau." },
+        { q: "Bagaimana cara penularan virus HIV yang paling utama?", options: ["Hubungan seksual berisiko, transfusi darah tercemar, dan penggunaan jarum suntik bergantian", "Gigitan nyamuk Aedes aegypti", "Berjabat tangan dan berpelukan", "Melalui udara pernapasan bebas"], answer: "Hubungan seksual berisiko, transfusi darah tercemar, dan penggunaan jarum suntik bergantian", diff: "mudah", exp: "HIV menular melalui pertukaran cairan tubuh tertentu (darah, sperma, cairan vagina, ASI)." },
+        { q: "Virus Ebola sangat ditakuti karena menyebabkan...", options: ["Demam berdarah parah dan kegagalan organ internal (pendarahan hebat)", "Kelumpuhan kaki permanen", "Kanker kulit kronis", "Gatal-gatal ringan pada kulit"], answer: "Demam berdarah parah dan kegagalan organ internal (pendarahan hebat)", diff: "sedang", exp: "Ebola menyebabkan demam berdarah hemoragik yang mematikan." },
+        { q: "Penyakit cacar ganas (Smallpox) yang telah berhasil diberantas di seluruh dunia disebabkan oleh...", options: ["Variola virus", "Varicella virus", "Rhabdovirus", "Poliovirus"], answer: "Variola virus", diff: "sulit", exp: "Smallpox disebabkan oleh Variola virus dan berhasil dieradikasi lewat vaksinasi." },
+        { q: "Penyakit gondongan (parotitis) ditandai dengan pembengkakan pada kelenjar...", options: ["Ludah (parotis) di bawah telinga", "Getah bening di ketiak", "Tiroid di leher", "Amandel di tenggorokan"], answer: "Ludah (parotis) di bawah telinga", diff: "sedang", exp: "Gondongan menyerang kelenjar air liur." },
+        { q: "Penyakit rabies pada manusia dapat menular melalui...", options: ["Air liur hewan terinfeksi yang masuk lewat gigitan atau luka", "Udara bebas di hutan", "Air minum yang dimasak", "Sentuhan bulu kucing"], answer: "Air liur hewan terinfeksi yang masuk lewat gigitan atau luka", diff: "mudah", exp: "Rabies menular lewat gigitan hewan pengidap rabies (anjing, kucing, kera)." },
+        { q: "Mengapa infeksi virus sangat sulit diobati dengan antibiotik?", options: ["Karena antibiotik dirancang untuk membunuh bakteri, bukan virus", "Karena virus memiliki dinding sel tebal", "Karena ukuran virus terlalu besar", "Karena virus memproduksi racun kebal"], answer: "Karena antibiotik dirancang untuk membunuh bakteri, bukan virus", diff: "mudah", exp: "Antibiotik tidak mempan terhadap virus karena virus tidak memiliki struktur seluler bakteri." },
+        { q: "Apa dampak ekonomi utama dari virus pada hewan ternak seperti FMD (Foot and Mouth Disease)?", options: ["Kerugian besar akibat penurunan produksi daging/susu dan larangan ekspor", "Peningkatan harga pakan ternak", "Kematian rumput di padang gembala", "Perubahan warna kulit sapi"], answer: "Kerugian besar akibat penurunan produksi daging/susu dan larangan ekspor", diff: "sedang", exp: "FMD sangat menular dan melumpuhkan industri peternakan." },
+        { q: "Penyakit saluran pernapasan pada ayam yang menular cepat dan menyebabkan kematian tinggi disebut...", options: ["Flu burung (Avian Influenza) / Tetelo", "Kanker darah", "TBC ayam", "Cacingan"], answer: "Flu burung (Avian Influenza) / Tetelo", diff: "mudah", exp: "Flu burung dan tetelo adalah momok besar peternakan unggas." }
+    ];
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = {};
+    let timerInterval;
+    let secondsElapsed = 0;
+
+    // Fungsi untuk mengacak array (Fisher-Yates shuffle)
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // Inisialisasi Kuis
+    function initQuiz() {
+        // Acak urutan 100 soal
+        questions = shuffleArray(rawQuestions);
+        
+        // Acak posisi pilihan ganda untuk setiap soal
+        questions = questions.map(item => {
+            return {
+                ...item,
+                shuffledOptions: shuffleArray(item.options)
+            };
+        });
+
+        currentQuestionIndex = 0;
+        score = 0;
+        userAnswers = {};
+        secondsElapsed = 0;
+
+        startTimer();
+        showQuestion();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            let mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            let secs = (secondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('time').innerText = `${mins}:${secs}`;
+        }, 1000);
+    }
+
+    function showQuestion() {
+        const qData = questions[currentQuestionIndex];
+        document.getElementById('progress-text').innerText = `Soal ${currentQuestionIndex + 1} dari ${questions.length}`;
+
+        let badgeClass = 'badge-mudah';
+        if (qData.diff === 'sedang') badgeClass = 'badge-sedang';
+        if (qData.diff === 'sulit') badgeClass = 'badge-sulit';
+
+        let html = `
+            <div class="question-card">
+                <span class="badge ${badgeClass}">Tingkat: ${qData.diff.toUpperCase()}</span>
+                <div class="question-title">${currentQuestionIndex + 1}. ${qData.q}</div>
+                <div class="options">
+        `;
+
+        qData.shuffledOptions.forEach((opt, idx) => {
+            let checked = userAnswers[currentQuestionIndex] === opt ? 'checked' : '';
+            html += `
+                <label>
+                    <input type="radio" name="question_${currentQuestionIndex}" value="${opt}" ${checked} onclick="saveAnswer(${currentQuestionIndex}, '${opt.replace(/'/g, "\\'")}')">
+                    ${opt}
+                </label>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        document.getElementById('question-container').innerHTML = html;
+
+        // Ubah teks tombol jika soal terakhir
+        const nextBtn = document.getElementById('next-btn');
+        if (currentQuestionIndex === questions.length - 1) {
+            nextBtn.innerText = "Selesaikan Kuis";
+        } else {
+            nextBtn.innerText = "Selanjutnya";
+        }
+    }
+
+    function saveAnswer(qIndex, answer) {
+        userAnswers[qIndex] = answer;
+    }
+
+    function nextQuestion() {
+        // Validasi apakah sudah dijawab (opsional, saat ini dibiarkan boleh kosong atau lanjut)
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        clearInterval(timerInterval);
+        
+        // Hitung skor
+        score = 0;
+        questions.forEach((q, idx) => {
+            if (userAnswers[idx] === q.answer) {
+                score++;
+            }
+        });
+
+        // Sembunyikan box kuis, tampilkan hasil
+        document.getElementById('quiz-box').style.display = 'none';
+        document.getElementById('result-container').style.display = 'block';
+
+        let finalScoreEl = document.getElementById('final-score');
+        finalScoreEl.innerText = `${score} / ${questions.length}`;
+
+        let message = "";
+        let percentage = (score / questions.length) * 100;
+        if (percentage >= 85) {
+            message = "Luar biasa! Pemahaman Anda tentang materi Bab Virus sangat mendalam.";
+        } else if (percentage >= 70) {
+            message = "Bagus! Anda sudah cukup menguasai materi virus, pertahankan!";
+        } else {
+            message = "Tetap semangat! Disarankan untuk mengulang kembali materi struktur, bentuk, dan peranan virus.";
+        }
+        document.getElementById('score-message').innerText = message;
+    }
+
+    // Jalankan kuis saat halaman dimuat
+    window.onload = initQuiz;
+</script>
+
+</body>
+</html>
